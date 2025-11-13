@@ -53,6 +53,7 @@ function EditableTitle({ initialTitle }) {
   );
 }
 
+
 export default function App() {
   const [phases, setPhases] = useState(["Phase 1"]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
