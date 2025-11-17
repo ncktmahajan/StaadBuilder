@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Eye,
   MousePointer2,
@@ -18,6 +18,14 @@ function TopToolbar() {
   const [hoveredTool, setHoveredTool] = useState(null);
   const [isPerspective, setIsPerspective] = useState(true);
   const [isRotating, setIsRotating] = useState(false);
+  // ✨ New state for controlling the slide-in animation
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    // Set isMounted to true after the component mounts
+    // This will trigger the transition from the initial 'top' (-50px) to the final 'top' (20px)
+    setIsMounted(true);
+  }, []);
 
   const toolbarItems = [
     { id: "view", label: "View", icon: <Eye size={20} strokeWidth={1.5} /> },
@@ -46,13 +54,14 @@ function TopToolbar() {
     <div
       style={{
         position: "absolute",
-        top: "20px",
+        top: isMounted ? "20px" : "-50px",
         left: "50%",
         transform: "translateX(-50%)",
         display: "flex",
         alignItems: "center",
         gap: "10px",
         zIndex: 50,
+        transition: "top 0.5s ease-out",
       }}
     >
       {/* 🧭 Main Toolbar */}
@@ -65,6 +74,7 @@ function TopToolbar() {
           padding: "6px 12px",
           gap: "10px",
           color: "white",
+           boxShadow: "0 4px 14px rgba(0,0,0,0.18)",
         }}
       >
         {toolbarItems.map((item, index) =>
@@ -132,6 +142,7 @@ function TopToolbar() {
                     opacity: 1,
                     transition: "opacity 0.2s ease",
                     zIndex: 999,
+                    boxShadow: "0 3px 10px rgba(0,0,0,0.25)",
                   }}
                 >
                   {item.label}

@@ -42,3 +42,36 @@ body {
 .animate-fadeInScale {
   animation: fadeInScale 0.18s ease-out forwards;
 }
+
+/* Entrance animation */
+.toolbar-animate {
+  opacity: 0;
+  transform: translateY(-15px);
+  animation: fadeDown 0.4s ease-out forwards;
+}
+
+@keyframes fadeDown {
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+/* Hover + active states */
+.toolbar-btn:hover {
+  transform: scale(1.1);
+}
+
+.toolbar-btn:active {
+  transform: scale(0.85);
+  transition: transform 0.1s ease;
+}
+
+/* Toggle rotation */
+.rotate-toggle {
+  transition: transform 0.25s ease;
+}
+
+.rotate-toggle.rotating {
+  transform: rotateY(180deg) scale(0.9);
+}
