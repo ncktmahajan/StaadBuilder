@@ -190,8 +190,8 @@ function TopToolbar() {
           }
           alt={isPerspective ? "Perspective" : "Orthographic"}
           style={{
-            width: "28px",
-            height: "28px",
+            width: "26px",
+            height: "26px",
             transform: isRotating
               ? "rotateY(180deg) scale(0.9)"
               : "rotateY(0deg) scale(1)",
