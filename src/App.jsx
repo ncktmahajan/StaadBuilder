@@ -6,9 +6,9 @@ import {
   GizmoViewport,
 } from "@react-three/drei";
 
-import TopToolbar from "./component/TopToolbar";
-import LeftPanel from "./component/LeftPanel";
-import RightPanel from "./component/RightPanel";
+import TopToolbar from "./Tool-Bar/TopToolbar";
+import LeftPanel from "./Left-Panel/LeftPanel";
+import RightPanel from "./Right-Panel/RightPanel";
 
 // 🔹 Simple Box for Visualization
 function Box() {

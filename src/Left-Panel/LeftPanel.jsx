@@ -14,6 +14,8 @@ import {
 import { LuPanelLeft } from "react-icons/lu";
 import { motion, AnimatePresence } from "framer-motion";
 
+import FormModal from "../component/FormModal";
+
 function EditableTitle({ initialTitle }) {
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
@@ -59,15 +61,17 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
 
+  // help menu + modal states
   const [isHelpMenuOpen, setIsHelpMenuOpen] = useState(false);
   const [helpMenuPosition, setHelpMenuPosition] = useState({ top: 0, left: 0 });
   const helpButtonRef = useRef(null);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  // modal for forms: "feedback" | "bug" | "feature" | null
+  const [formModal, setFormModal] = useState(null);
 
-  const addPhase = () => setPhases([...phases, `Phase ${phases.length + 1}`]);
+  const toggleSidebar = () => setIsSidebarOpen((s) => !s);
+  const addPhase = () => setPhases((p) => [...p, `Phase ${p.length + 1}`]);
 
-  // 🔥 UPDATED MENU ITEMS WITH ICONS
   const menuItems = [
     {
       label: "Home",
@@ -77,7 +81,7 @@ export default function App() {
     {
       label: "File",
       submenu: [
-        { label: "New",icon: "/icons/new.png", action: () => alert("New File Created") },
+        { label: "New", icon: "/icons/new.png", action: () => alert("New File Created") },
         { label: "Open", icon: "/icons/open.png", action: () => alert("Opening File...") },
         { label: "Save", icon: "/icons/save.png", action: () => alert("File Saved") },
         { label: "Save As", icon: "/icons/save-as.png", action: () => alert("Save As...") },
@@ -92,13 +96,14 @@ export default function App() {
     },
   ];
 
+  // set help menu items to open the modal
   const helpMenuItems = [
     { label: "Staad Builder Docs", action: () => alert("Opening Docs...") },
     { label: "Tutorial", action: () => alert("Opening Tutorial...") },
     { type: "divider" },
-    { label: "Send Feedback", action: () => alert("Opening Feedback Form...") },
-    { label: "Report Bug", action: () => alert("Opening Bug Report...") },
-    { label: "Feature Request", action: () => alert("Opening Feature Request Form...") },
+    { label: "Send Feedback", action: () => setFormModal("feedback") },
+    { label: "Report Bug", action: () => setFormModal("bug") },
+    { label: "Feature Request", action: () => setFormModal("feature") },
   ];
 
   useEffect(() => {
@@ -126,10 +131,16 @@ export default function App() {
     }
   };
 
+  function handleFormSubmit(type, payload) {
+    // Replace with your API call. For now we'll just console + alert.
+    console.log("Submitted", type, payload);
+    alert(`${type} submitted — check console for payload.`);
+  }
+
+
+
   return (
     <div className="min-h-screen w-screen flex overflow-hidden bg-white relative">
-
-      {/* SIDEBAR */}
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -147,10 +158,7 @@ export default function App() {
                 <img src="/stdLogo.png" alt="Logo" className="w-5 h-5 object-contain" />
                 <h2 className="text-sm">Staad Builder</h2>
 
-                <button
-                  onClick={() => setMenuOpen(!menuOpen)}
-                  className="flex items-center gap-1 text-gray-400 hover:text-white transition"
-                >
+                <button onClick={() => setMenuOpen((m) => !m)} className="flex items-center gap-1 text-gray-400 hover:text-white transition">
                   <ChevronDown size={14} className={`transition-transform ${menuOpen ? "rotate-180" : ""}`} />
                 </button>
               </div>
@@ -164,9 +172,7 @@ export default function App() {
             <div className="px-4 pt-2 pb-3 border-b border-gray-700">
               <div className="flex items-center justify-between">
                 <EditableTitle initialTitle="KTPL – Staad Model" />
-                <span className="text-[10px] text-[#84ABFF] bg-[#353F56] px-2 py-[3px] rounded-[4px]">
-                  Free
-                </span>
+                <span className="text-[10px] text-[#84ABFF] bg-[#353F56] px-2 py-[3px] rounded-[4px]">Free</span>
               </div>
             </div>
 
@@ -184,7 +190,7 @@ export default function App() {
                 <span>Phases</span>
 
                 <div className="flex items-center gap-2">
-                  <motion.button whileHover={{ scale: 1.15 }} onClick={() => setShowPhases(!showPhases)}>
+                  <motion.button whileHover={{ scale: 1.15 }} onClick={() => setShowPhases((s) => !s)}>
                     <ChevronDown size={14} className={`${showPhases ? "rotate-0" : "-rotate-90"}`} />
                   </motion.button>
 
@@ -204,9 +210,7 @@ export default function App() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.2 }}
-                        className={`flex items-center justify-between w-full px-3 py-2 rounded-md text-sm ${
-                          idx === 0 ? "bg-[#4566AF] text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                        }`}
+                        className={`flex items-center justify-between w-full px-3 py-2 rounded-md text-sm ${idx === 0 ? "bg-[#4566AF] text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white"}`}
                       >
                         <span>{phase}</span>
 
@@ -227,11 +231,7 @@ export default function App() {
                 Import
               </motion.button>
 
-              <motion.button
-                ref={helpButtonRef}
-                onClick={openHelpMenu}
-                className="flex items-center gap-2 text-gray-300 hover:text-white transition text-sm w-full px-3 py-2 rounded-md hover:bg-gray-700"
-              >
+              <motion.button ref={helpButtonRef} onClick={openHelpMenu} className="flex items-center gap-2 text-gray-300 hover:text-white transition text-sm w-full px-3 py-2 rounded-md hover:bg-gray-700">
                 <HelpCircle size={14} />
                 Help & Feedback
               </motion.button>
@@ -240,59 +240,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* REOPEN BUTTON */}
-      {!isSidebarOpen && (
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          whileHover={{ scale: 1.15 }}
-          whileTap={{ scale: 0.85 }}
-          onClick={toggleSidebar}
-          className="absolute top-4 left-4 bg-[#2b2b2b] text-white p-2 rounded-md shadow-md z-50"
-        >
-          <LuPanelLeft className="w-5 h-5 rotate-180" />
-        </motion.button>
-      )}
-
-      {/* DELETE CONFIRM MODAL */}
-      <AnimatePresence>
-        {phaseToDelete !== null && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.85 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 backdrop-blur-sm"
-          >
-            <div className="bg-[#2C2C2C] p-5 rounded-xl border border-gray-700 w-[280px] text-center shadow-lg">
-              <h2 className="text-white text-sm font-medium mb-3">
-                Are you sure you want to delete this phase?
-              </h2>
-
-              <div className="flex justify-center gap-3 mt-2">
-                <button
-                  onClick={() => {
-                    setPhases(phases.filter((_, i) => i !== phaseToDelete));
-                    setPhaseToDelete(null);
-                  }}
-                  className="px-3 py-1.5 bg-[#A50000] text-white rounded-md text-sm hover:bg-red-700"
-                >
-                  Delete
-                </button>
-
-                <button
-                  onClick={() => setPhaseToDelete(null)}
-                  className="px-3 py-1.5 bg-[#3D3D3D] text-gray-200 rounded-md text-sm hover:bg-gray-600"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* MAIN DROPDOWN MENU */}
+      {/* MAIN DROPDOWN MENU (keeps earlier behavior) */}
       {menuOpen &&
         ReactDOM.createPortal(
           <motion.div
@@ -300,19 +248,16 @@ export default function App() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.85, y: -6 }}
             transition={{ duration: 0.18 }}
-            className="main-dropdown-container fixed left-[75px] top-[70px] 
-              z-[9999] w-[200px] rounded-xl border border-[#3E3E3E]
-              bg-gradient-to-b from-[#2C2C2C] to-[#1E1E1E] shadow-md py-2"
+            className="main-dropdown-container fixed left-[75px] top-[70px] z-[9999] w-[200px] rounded-xl border border-[#3E3E3E] bg-gradient-to-b from-[#2C2C2C] to-[#1E1E1E] shadow-md py-2"
           >
             {menuItems.map((item, i) => (
-              <div key={i} className="relative group"
+              <div
+                key={i}
+                className="relative group"
                 onMouseEnter={() => setActiveSubmenu(item.submenu ? item.label : null)}
                 onMouseLeave={() => setActiveSubmenu(null)}
               >
-                <button
-                  onClick={item.action}
-                  className="flex justify-between items-center w-full px-4 py-2 text-sm text-gray-200 hover:bg-[#353535] hover:text-white rounded-md"
-                >
+                <button onClick={item.action} className="flex justify-between items-center w-full px-4 py-2 text-sm text-gray-200 hover:bg-[#353535] hover:text-white rounded-md">
                   <div className="flex items-center gap-2">
                     <span>{item.label}</span>
                   </div>
@@ -322,33 +267,17 @@ export default function App() {
 
                 <AnimatePresence>
                   {item.submenu && activeSubmenu === item.label && (
-                    <motion.div
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute left-[190px] top-0 w-[160px] 
-                        bg-[#2C2C2C] border border-[#3E3E3E] rounded-lg shadow py-2"
-                    >
+                    <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.2 }} className="absolute left-[190px] top-0 w-[160px] bg-[#2C2C2C] border border-[#3E3E3E] rounded-lg shadow py-2">
                       {item.submenu.map((sub, j) => (
-                        <button
-                          key={j}
-                          onClick={sub.action}
-                          className="flex justify-between items-center w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-[#353535] hover:text-white"
-                        >
+                        <button key={j} onClick={sub.action} className="flex justify-between items-center w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-[#353535] hover:text-white">
                           <span>{sub.label}</span>
 
-                          {sub.icon && (
-                            typeof sub.icon === "string" ? (
-                              <img
-                                src={sub.icon}
-                                alt=""
-                                className="w-[18] h-[18px] object-contain"
-                              />
+                          {sub.icon &&
+                            (typeof sub.icon === "string" ? (
+                              <img src={sub.icon} alt="" className="w-[18px] h-[18px] object-contain" />
                             ) : (
-                              <sub.icon size={18} />
-                            )
-                          )}
+                              React.createElement(sub.icon, { size: 18 })
+                            ))}
                         </button>
                       ))}
                     </motion.div>
@@ -360,7 +289,7 @@ export default function App() {
           document.body
         )}
 
-      {/* HELP MENU */}
+      {/* HELP MENU PORTAL */}
       {isHelpMenuOpen &&
         ReactDOM.createPortal(
           <AnimatePresence>
@@ -370,8 +299,7 @@ export default function App() {
               exit={{ opacity: 0, scale: 0.85, y: 10 }}
               transition={{ duration: 0.18 }}
               style={{ top: helpMenuPosition.top, left: helpMenuPosition.left }}
-              className="help-dropdown-container fixed z-[9999] w-[220px] rounded-xl 
-                border border-[#3E3E3E] bg-gradient-to-b from-[#2C2C2C] to-[#1E1E1E] shadow-xl py-2"
+              className="help-dropdown-container fixed z-[9999] w-[220px] rounded-xl border border-[#3E3E3E] bg-gradient-to-b from-[#2C2C2C] to-[#1E1E1E] shadow-xl py-2"
             >
               {helpMenuItems.map((item, i) =>
                 item.type === "divider" ? (
@@ -381,7 +309,7 @@ export default function App() {
                     key={i}
                     onClick={() => {
                       item.action();
-                      setIsHelpMenuOpen(false);
+                      setIsHelpMenuOpen(false); // close menu on selection
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-[#353535] hover:text-white"
                   >
@@ -393,6 +321,27 @@ export default function App() {
           </AnimatePresence>,
           document.body
         )}
+
+      {/* DELETE CONFIRMATION */}
+      <AnimatePresence>
+        {phaseToDelete !== null && (
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.85 }} transition={{ duration: 0.2 }} className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 backdrop-blur-sm">
+            <div className="bg-[#2C2C2C] p-5 rounded-xl border border-gray-700 w-[280px] text-center shadow-lg">
+              <h2 className="text-white text-sm font-medium mb-3">Are you sure you want to delete this phase?</h2>
+
+              <div className="flex justify-center gap-3 mt-2">
+                <button onClick={() => { setPhases((p) => p.filter((_, i) => i !== phaseToDelete)); setPhaseToDelete(null); }} className="px-3 py-1.5 bg-[#A50000] text-white rounded-md text-sm hover:bg-red-700">Delete</button>
+                <button onClick={() => setPhaseToDelete(null)} className="px-3 py-1.5 bg-[#3D3D3D] text-gray-200 rounded-md text-sm hover:bg-gray-600">Cancel</button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Render the form modal when needed */}
+      <AnimatePresence>
+        {formModal && <FormModal type={formModal} onClose={() => setFormModal(null)} onSubmit={handleFormSubmit} />}
+      </AnimatePresence>
     </div>
   );
 }
