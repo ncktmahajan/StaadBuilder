@@ -137,10 +137,25 @@ export default function App() {
     alert(`${type} submitted — check console for payload.`);
   }
 
-
-
   return (
     <div className="min-h-screen w-screen flex overflow-hidden bg-white relative">
+      {/* Sidebar Toggle Button - Now outside the sidebar's conditional rendering */}
+      {!isSidebarOpen && (
+        <motion.button 
+          key="sidebar-open-btn" // Added key for AnimatePresence if you want to use it
+          initial={{ opacity: 0, x: -10 }} 
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.2 }}
+          whileHover={{ scale: 1.15 }} 
+          whileTap={{ scale: 0.8 }} 
+          onClick={toggleSidebar} 
+          className="absolute top-[15px] left-[15px] p-2 rounded-full bg-[#2C2C2C] text-white z-50 shadow-lg"
+        >
+          <LuPanelLeft className={`w-5 h-5`} />
+        </motion.button>
+      )}
+
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -163,8 +178,9 @@ export default function App() {
                 </button>
               </div>
 
+              {/* Sidebar Close Button - Stays inside the sidebar's view */}
               <motion.button whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.8 }} onClick={toggleSidebar}>
-                <LuPanelLeft className={`w-5 h-5 text-white ${isSidebarOpen ? "rotate-180" : ""}`} />
+                <LuPanelLeft className={`w-5 h-5 text-white rotate-180`} />
               </motion.button>
             </div>
 
