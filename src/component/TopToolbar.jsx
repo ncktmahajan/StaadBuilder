@@ -185,8 +185,8 @@ function TopToolbar() {
         <img
           src={
             isPerspective
-              ? "/perspective.png"
-              : "/orthographic.png"
+              ? "/icons/perspective.png"
+              : "/icons/orthographic.png"
           }
           alt={isPerspective ? "Perspective" : "Orthographic"}
           style={{

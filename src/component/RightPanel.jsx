@@ -71,7 +71,7 @@ export default function RightPanel() {
             className="relative"
           >
             <img
-              src="/bell.png"   // YOUR custom bell icon
+              src="/icons/bell.png"   // YOUR custom bell icon
               className="w-[20px] h-[20px] object-contain opacity-80 hover:opacity-100 transition"
               alt="Notifications"
             />

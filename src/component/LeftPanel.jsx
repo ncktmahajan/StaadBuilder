@@ -8,10 +8,6 @@ import {
   ChevronDown,
   Trash2,
   ChevronRight,
-  FilePlus,
-  FolderOpen,
-  Save,
-  SaveAll,
   Undo2,
   Redo2,
 } from "lucide-react";
@@ -81,10 +77,10 @@ export default function App() {
     {
       label: "File",
       submenu: [
-        { label: "New", icon: FilePlus, action: () => alert("New File Created") },
-        { label: "Open", icon: FolderOpen, action: () => alert("Opening File...") },
-        { label: "Save", icon: Save, action: () => alert("File Saved") },
-        { label: "Save As", icon: SaveAll, action: () => alert("Save As...") },
+        { label: "New",icon: "/icons/new.png", action: () => alert("New File Created") },
+        { label: "Open", icon: "/icons/open.png", action: () => alert("Opening File...") },
+        { label: "Save", icon: "/icons/save.png", action: () => alert("File Saved") },
+        { label: "Save As", icon: "/icons/save-as.png", action: () => alert("Save As...") },
       ],
     },
     {
@@ -341,7 +337,18 @@ export default function App() {
                           className="flex justify-between items-center w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-[#353535] hover:text-white"
                         >
                           <span>{sub.label}</span>
-                          {sub.icon && <sub.icon size={14} />}
+
+                          {sub.icon && (
+                            typeof sub.icon === "string" ? (
+                              <img
+                                src={sub.icon}
+                                alt=""
+                                className="w-[18] h-[18px] object-contain"
+                              />
+                            ) : (
+                              <sub.icon size={18} />
+                            )
+                          )}
                         </button>
                       ))}
                     </motion.div>
