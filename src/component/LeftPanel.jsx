@@ -122,7 +122,8 @@ export default function App() {
   const openHelpMenu = () => {
     if (helpButtonRef.current) {
       const rect = helpButtonRef.current.getBoundingClientRect();
-      const top = rect.top - 200;
+      const upwardShift = 20;
+      const top = rect.top - 200 - upwardShift;
       const left = rect.left;
       setHelpMenuPosition({ top, left });
       setIsHelpMenuOpen(true);
