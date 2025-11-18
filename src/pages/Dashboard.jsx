@@ -8,7 +8,9 @@ import UpgradeBanner from "../component/UpgradeBanner";
 import LayoutSwitcher from "../component/LayoutSwitcher";
 import SearchBar from "../component/SearchBar";
 import FormModal from "../component/FormModal"; 
-import CustomDropdown from "../component/CustomDropdown";   // ⬅️ NEW IMPORT
+import CustomDropdown from "../component/CustomDropdown";
+
+import MobileWarning from "../component/MobileWarning";
 
 /* sample mock projects */
 const createMock = (i) => ({
@@ -41,6 +43,13 @@ export default function Dashboard() {
   }, [query, projects]);
 
   return (
+    <div className="h-screen overflow-hidden">
+
+    {/* MOBILE VIEW BLOCKER */}
+    <div className="block lg:hidden">
+      <MobileWarning />
+    </div>
+
     <div className="h-screen flex flex-col overflow-hidden">
       <Header setFormModal={setFormModal} />
 
@@ -143,6 +152,7 @@ export default function Dashboard() {
 
         </main>
       </div>
+    </div>
     </div>
   );
 }
