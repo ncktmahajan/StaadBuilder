@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { Home as HomeIcon, Upload, Plus } from "lucide-react";   // 👈 ADDED
+import { Home as HomeIcon, Upload, Plus } from "lucide-react";
+
 import Header from "../component/Header";
 import Sidebar from "../component/Sidebar";
 import ProjectCard from "../component/ProjectCard";
@@ -7,6 +8,7 @@ import UpgradeBanner from "../component/UpgradeBanner";
 import LayoutSwitcher from "../component/LayoutSwitcher";
 import SearchBar from "../component/SearchBar";
 import FormModal from "../component/FormModal"; 
+import CustomDropdown from "../component/CustomDropdown";   // ⬅️ NEW IMPORT
 
 /* sample mock projects */
 const createMock = (i) => ({
@@ -35,9 +37,7 @@ export default function Dashboard() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return projects.filter(
-      (p) => !q || p.title.toLowerCase().includes(q)
-    );
+    return projects.filter((p) => !q || p.title.toLowerCase().includes(q));
   }, [query, projects]);
 
   return (
@@ -47,6 +47,7 @@ export default function Dashboard() {
       <div className="flex flex-1 h-full overflow-hidden">
         <Sidebar setFormModal={setFormModal} />
 
+        {/* Modal */}
         {formModal && (
           <FormModal
             type={formModal}
@@ -56,7 +57,11 @@ export default function Dashboard() {
         )}
 
         <main className="relative flex-1 bg-[#2c2c2c] p-6 overflow-y-auto scrollbar-hide">
+
+          {/* TOP BAR */}
           <div className="mb-6 flex items-center justify-between gap-4">
+            
+            {/* LEFT SIDE */}
             <div className="flex items-center gap-4">
 
               {/* HOME TAG */}
@@ -67,30 +72,31 @@ export default function Dashboard() {
                 </span>
               </div>
 
+              {/* LAYOUT SWITCHER */}
               <LayoutSwitcher layout={layout} setLayout={setLayout} />
 
-              {/* SORT */}
+              {/* SORT DROPDOWN */}
               <div className="flex items-center gap-3">
                 <label className="text-sm text-gray-300">Sort by</label>
-                <select
+
+                <CustomDropdown
                   value={sort}
-                  onChange={(e) => setSort(e.target.value)}
-                  className="bg-[#2B2B2B] px-3 py-2 rounded-md text-sm text-gray-300 outline-none"
-                >
-                  <option value="recent">Recent</option>
-                  <option value="name">Name</option>
-                </select>
+                  onChange={setSort}
+                  options={[
+                    { value: "recent", label: "Recent" },
+                    { value: "name", label: "Name" }
+                  ]}
+                />
               </div>
 
             </div>
 
-            {/* RIGHT PANEL BUTTONS */}
+            {/* RIGHT BUTTONS */}
             <div className="flex items-center gap-3">
 
-              {/* SEARCH BAR */}
               <SearchBar value={query} onChange={(v) => setQuery(v)} />
 
-             {/* IMPORT BUTTON */}
+              {/* IMPORT BUTTON */}
               <div className="p-[1px] rounded-md bg-gradient-to-r from-[#FFFFFF] to-[#164099]">
                 <button className="w-full h-full px-4 py-2 bg-[#2c2c2c] rounded-md text-sm text-gray-200 flex items-center gap-2 hover:bg-[#353535] transition">
                   <Upload size={16} />
@@ -109,8 +115,10 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* UPGRADE BANNER */}
           <UpgradeBanner />
 
+          {/* PROJECT CARDS */}
           <section className="mt-6">
             {layout === "grid" ? (
               <div className="grid grid-cols-4 gap-6">
@@ -127,7 +135,7 @@ export default function Dashboard() {
             )}
           </section>
 
-          {/* FIXED WATERMARK */}
+          {/* WATERMARK */}
           <div className="pointer-events-none fixed bottom-6 right-6 text-right text-xs text-white opacity-70 select-none">
             <div>Powered by Kosoku ❤️</div>
             <div>Engineered and developed in India 🇮🇳</div>

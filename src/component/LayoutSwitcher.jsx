@@ -6,13 +6,13 @@ export default function LayoutSwitcher({ layout, setLayout }) {
     <div className="flex items-center gap-2">
       <button
         onClick={() => setLayout("grid")}
-        className={`p-2 rounded-md ${layout === "grid" ? "bg-[#333] text-white" : "text-gray-300 hover:bg-[#2b2b2b]"}`}
+        className={`p-2 rounded-md ${layout === "grid" ? "bg-[#383838] text-white" : "text-gray-300 hover:bg-[#2b2b2b]"}`}
       >
         <Grid size={16} />
       </button>
       <button
         onClick={() => setLayout("list")}
-        className={`p-2 rounded-md ${layout === "list" ? "bg-[#333] text-white" : "text-gray-300 hover:bg-[#2b2b2b]"}`}
+        className={`p-2 rounded-md ${layout === "list" ? "bg-[#383838] text-white" : "text-gray-300 hover:bg-[#2b2b2b]"}`}
       >
         <List size={16} />
       </button>
