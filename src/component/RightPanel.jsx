@@ -1,11 +1,20 @@
 import { useState } from "react";
 import { Plus, Minus, ChevronDown, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactDOM from "react-dom";
 
 export default function RightPanel() {
   const [columns, setColumns] = useState([{ id: 1 }]);
   const [members, setMembers] = useState([{ id: 1 }]);
   const [ties, setTies] = useState([{ id: 1 }]);
+
+  // NOTIFICATIONS
+  const [notifications, setNotifications] = useState([
+    { id: 1, message: "Model updated successfully!" },
+    { id: 2, message: "Grid plane applied." }
+  ]);
+
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   const addItem = (list, setList) =>
     setList([...list, { id: Date.now() }]);
@@ -21,7 +30,6 @@ export default function RightPanel() {
     );
   };
 
-  // ANIMATION VARIANTS
   const itemAnim = {
     initial: { opacity: 0, scale: 0.9, y: -6 },
     animate: { opacity: 1, scale: 1, y: 0 },
@@ -31,15 +39,17 @@ export default function RightPanel() {
 
   return (
     <motion.div
-        initial={{ opacity: 0, x: 40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-        className="absolute right-[15px] top-[15px] bottom-[15px] w-[300px] bg-[#2C2C2C] text-white
-                  rounded-xl shadow-lg flex flex-col border border-gray-800 z-40 overflow-hidden"
-      >
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="absolute right-[15px] top-[15px] bottom-[15px] w-[300px] bg-[#2C2C2C] text-white
+                 rounded-xl shadow-lg flex flex-col border border-gray-800 z-40 overflow-hidden"
+    >
 
       {/* HEADER */}
       <div className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between border-b border-gray-700">
+
+        {/* User Profile */}
         <div className="flex items-center gap-3">
           <div className="p-[2px] rounded-full border-2 border-[#256AFF]">
             <img
@@ -50,13 +60,87 @@ export default function RightPanel() {
           </div>
         </div>
 
-        <div className="flex gap-2">
+        {/* RIGHT SIDE BUTTONS */}
+        <div className="flex items-center gap-3 relative">
+
+          {/* 🔔 CUSTOM NOTIFICATION ICON */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.85 }}
+            onClick={() => setIsNotifOpen(!isNotifOpen)}
+            className="relative"
+          >
+            <img
+              src="/bell.png"   // YOUR custom bell icon
+              className="w-[20px] h-[20px] object-contain opacity-80 hover:opacity-100 transition"
+              alt="Notifications"
+            />
+
+            {/* RED DOT */}
+            {notifications.length > 0 && (
+              <motion.span
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="absolute top-[0px] left-[3px] w-1.5 h-1.5 
+                           bg-red-500 rounded-full shadow-red-500 shadow-md"
+              />
+            )}
+          </motion.button>
+
+          {/* NOTIFICATION DROPDOWN */}
+          {isNotifOpen &&
+            ReactDOM.createPortal(
+              <AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0, y: -6, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.9 }}
+                  transition={{ duration: 0.18 }}
+                  className="fixed right-[180px] top-[75px] w-[240px]
+                            bg-[#2C2C2C] border border-gray-700 rounded-xl shadow-2xl p-3
+                            z-[99999]"
+                >
+                  {/* HEADER */}
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-xs text-gray-300 font-medium">Notifications</h4>
+
+                    {notifications.length > 0 && (
+                      <button
+                        onClick={() => setNotifications([])}
+                        className="text-[11px] px-2 py-0.5 border border-[#515151] hover:bg-gray-600 
+                                  text-white rounded-md transition"
+                      >
+                        Clear All
+                      </button>
+                    )}
+                  </div>
+
+                  {/* LIST */}
+                  <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+                    {notifications.length === 0 ? (
+                      <p className="text-gray-500 text-xs">No new notifications.</p>
+                    ) : (
+                      notifications.map((n) => (
+                        <div key={n.id} className="text-xs text-gray-200 px-2 py-2 rounded-md shadow-sm">
+                          {n.message}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </motion.div>
+              </AnimatePresence>,
+              document.body
+            )
+          }
+
+          {/* SHARE BUTTON */}
           <div className="p-[1px] rounded-md bg-gradient-to-br from-[#CCCCCC] to-[#666666] inline-block">
             <button className="px-3 py-1.5 rounded-md text-sm bg-[#3D3D3D] text-white hover:bg-gray-600 transition">
               Share
             </button>
           </div>
 
+          {/* EXPORT BUTTON */}
           <div className="p-[1px] rounded-md bg-gradient-to-br from-[#164099] to-[#FFFFFF] inline-block">
             <button className="px-3 py-1.5 bg-blue-600 rounded-md text-sm text-white hover:bg-[#256AFF] transition">
               Export
@@ -65,9 +149,10 @@ export default function RightPanel() {
         </div>
       </div>
 
-      {/* SCROLL CONTENT */}
+      {/* SCROLL AREA */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6 scrollbar-hide">
-        {/* PROJECT WORKFLOW (unchanged) */}
+
+        {/* PROJECT WORKFLOW */}
         <section>
           <h3 className="text-sm font-medium mb-4 text-white">Project Workflow</h3>
 
@@ -96,9 +181,10 @@ export default function RightPanel() {
           </div>
         </section>
 
-        {/* GRID PLANE (unchanged) */}
+        {/* GRID PLANE */}
         <section className="border-t border-gray-700 pt-4">
           <h3 className="text-sm font-medium mb-2">Grid Plane</h3>
+
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className="text-xs w-4">X</span>
@@ -108,6 +194,7 @@ export default function RightPanel() {
                 className="flex-1 bg-[#3D3D3D] text-xs px-2 py-1 rounded-md focus:outline-none"
               />
             </div>
+
             <div className="flex items-center gap-2">
               <span className="text-xs w-4">Y</span>
               <input
@@ -116,6 +203,7 @@ export default function RightPanel() {
                 className="flex-1 bg-[#3D3D3D] text-xs px-2 py-1 rounded-md focus:outline-none"
               />
             </div>
+
             <button className="w-full bg-[#256AFF] text-sm rounded-md py-2 hover:bg-blue-700 transition">
               Place the Grid
             </button>
@@ -143,15 +231,13 @@ export default function RightPanel() {
                 {...itemAnim}
                 className="bg-[#3E3E3E] p-2 rounded-lg mb-2 text-xs space-y-2 text-gray-300"
               >
-                {/* Type */}
+                {/* TYPE */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 flex-1">
                     <label className="text-xs w-10">Type</label>
 
                     <div className="relative flex-1">
-                      <select
-                        className="bg-[#656565] w-full px-2 py-1 rounded-md text-xs text-gray-200 pr-8 appearance-none"
-                      >
+                      <select className="bg-[#656565] w-full px-2 py-1 rounded-md text-xs text-gray-200 pr-8 appearance-none">
                         <option>Column</option>
                         <option>Rafter</option>
                       </select>
@@ -172,7 +258,7 @@ export default function RightPanel() {
                   </motion.button>
                 </div>
 
-                {/* Point */}
+                {/* POINT */}
                 <div className="flex items-center gap-2">
                   <label className="text-xs w-10">Point</label>
 
@@ -215,7 +301,7 @@ export default function RightPanel() {
                 {...itemAnim}
                 className="bg-[#3E3E3E] p-2 rounded-lg mb-2 text-xs space-y-2"
               >
-                {/* Start */}
+                {/* START */}
                 <div className="flex justify-between items-center gap-2">
                   <label className="w-10">Start</label>
 
@@ -224,17 +310,15 @@ export default function RightPanel() {
                       className={`w-4 h-4 rounded-sm border cursor-pointer flex items-center justify-center shrink-0 ${
                         mem.startChecked ? "bg-[#A50000] border-[#A50000]" : "border-[#CFAD00]"
                       }`}
-                      onClick={() =>
-                        toggleCheckbox(mem.id, members, setMembers, "startChecked")
-                      }
+                      onClick={() => toggleCheckbox(mem.id, members, setMembers, "startChecked")}
                     >
                       {mem.startChecked && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
                           viewBox="0 0 24 24"
                           stroke="white"
                           strokeWidth="3"
+                          fill="none"
                           className="w-3 h-3"
                         >
                           <polyline points="20 6 9 17 4 12" />
@@ -258,7 +342,7 @@ export default function RightPanel() {
                   </motion.button>
                 </div>
 
-                {/* End */}
+                {/* END */}
                 <div className="flex justify-between items-center gap-2">
                   <label className="w-10">End</label>
 
@@ -267,17 +351,15 @@ export default function RightPanel() {
                       className={`w-4 h-4 rounded-sm border cursor-pointer flex items-center justify-center shrink-0 ${
                         mem.endChecked ? "bg-[#A50000] border-[#A50000]" : "border-[#CFAD00]"
                       }`}
-                      onClick={() =>
-                        toggleCheckbox(mem.id, members, setMembers, "endChecked")
-                      }
+                      onClick={() => toggleCheckbox(mem.id, members, setMembers, "endChecked")}
                     >
                       {mem.endChecked && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
                           viewBox="0 0 24 24"
                           stroke="white"
                           strokeWidth="3"
+                          fill="none"
                           className="w-3 h-3"
                         >
                           <polyline points="20 6 9 17 4 12" />
