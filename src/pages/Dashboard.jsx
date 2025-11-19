@@ -106,7 +106,7 @@ export default function Dashboard() {
               <SearchBar value={query} onChange={(v) => setQuery(v)} />
 
               {/* IMPORT BUTTON */}
-              <div className="p-[1px] rounded-md bg-gradient-to-r from-[#FFFFFF] to-[#164099]">
+              <div className="p-[0.5px] rounded-md bg-[#f4f4f4]">
                 <button className="w-full h-full px-4 py-2 bg-[#2c2c2c] rounded-md text-sm text-gray-200 flex items-center gap-2 hover:bg-[#353535] transition">
                   <Upload size={16} />
                   Import
@@ -114,7 +114,7 @@ export default function Dashboard() {
               </div>
 
               {/* CREATE BUTTON */}
-              <div className="p-[1px] rounded-md bg-gradient-to-r from-[#164099] to-[#FFFFFF]">
+              <div className="p-[0.5px] rounded-md bg-[#f4f4f4]">
                 <button className="w-full h-full px-4 py-2 bg-[#256AFF] rounded-md text-sm text-white flex items-center gap-2 hover:bg-[#1a55d9] transition">
                   <Plus size={16} />
                   Create

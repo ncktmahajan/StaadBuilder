@@ -134,14 +134,14 @@ export default function RightPanel() {
           }
 
           {/* SHARE BUTTON */}
-          <div className="p-[1px] rounded-md bg-gradient-to-br from-[#CCCCCC] to-[#666666] inline-block">
+          <div className="p-[0.5px] rounded-md bg-[#ffffff]">
             <button className="px-3 py-1.5 rounded-md text-sm bg-[#3D3D3D] text-white hover:bg-gray-600 transition">
               Share
             </button>
           </div>
 
           {/* EXPORT BUTTON */}
-          <div className="p-[1px] rounded-md bg-gradient-to-br from-[#164099] to-[#FFFFFF] inline-block">
+          <div className="p-[0.5px] rounded-md bg-[#ffffff]">
             <button className="px-3 py-1.5 bg-blue-600 rounded-md text-sm text-white hover:bg-[#256AFF] transition">
               Export
             </button>

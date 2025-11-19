@@ -1,10 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, {useEffect, useState, useRef } from "react";
 import ReactDOM from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 import {
   Home,
-  FileText,
+  Pencil,
   Trash2,
   Layers,
   HelpCircle,
@@ -42,6 +42,8 @@ export default function Sidebar({ setFormModal }) {
     { label: "Feature Request", action: () => setFormModal("feature") },
   ];
 
+const helpMenuRef = useRef(null);
+
 const openHelpMenu = () => {
   if (helpButtonRef.current) {
     const rect = helpButtonRef.current.getBoundingClientRect();
@@ -54,6 +56,22 @@ const openHelpMenu = () => {
   }
 };
 
+useEffect(() => {
+  function handleClickOutside(e) {
+    if (
+      helpMenuRef.current &&
+      !helpMenuRef.current.contains(e.target) &&
+      !helpButtonRef.current.contains(e.target)
+    ) {
+      setIsHelpMenuOpen(false);
+    }
+  }
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
+
   return (
     <>
       <aside className="w-[250px] bg-[#2A2A2A] h-[calc(100vh-64px)] flex flex-col py-3 border-r border-[#525151]">
@@ -62,7 +80,7 @@ const openHelpMenu = () => {
           <SidebarItem icon={Home} label="Home" active />
 
           <div className="mt-3">
-            <SidebarItem icon={FileText} label="My files" />
+            <SidebarItem icon={Pencil} label="My files" />
           </div>
         </div>
 
@@ -91,6 +109,7 @@ const openHelpMenu = () => {
         ReactDOM.createPortal(
           <AnimatePresence>
             <motion.div
+              ref={helpMenuRef}
               initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.85, y: 10 }}
