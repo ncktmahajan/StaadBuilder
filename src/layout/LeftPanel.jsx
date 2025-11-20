@@ -15,9 +15,11 @@ import { LuPanelLeft } from "react-icons/lu";
 import { motion, AnimatePresence } from "framer-motion";
 
 import FormModal from "../component/FormModal";
+// 1. IMPORT THE NEW COMPONENT
+import ImportOverlay from "../component/ImportOverlay"; // Assuming ImportOverlay.jsx is in the same directory
 
-// --- START: Helper Components (Modified) ---
-
+// --- START: Helper Components (Unchanged) ---
+// ... (EditableTitle and IconOnlySidebarButton remain unchanged)
 function EditableTitle({ initialTitle, isCollapsed }) {
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
@@ -75,12 +77,11 @@ const IconOnlySidebarButton = ({ onClick }) => (
     <LuPanelLeft className={`w-5 h-5`} />
   </motion.button>
 );
-
 // --- END: Helper Components ---
+
 
 export default function App() {
   const [phases, setPhases] = useState(["Phase 1"]);
-  // State for the sidebar stages: 'full', 'collapsed', 'icon'
   const [sidebarStage, setSidebarStage] = useState('full');
   const [showPhases, setShowPhases] = useState(true);
   const [phaseToDelete, setPhaseToDelete] = useState(null);
@@ -92,11 +93,14 @@ export default function App() {
   const [helpMenuPosition, setHelpMenuPosition] = useState({ top: 0, left: 0 });
   const helpButtonRef = useRef(null);
   const [formModal, setFormModal] = useState(null);
+  
+  // 2. NEW STATE FOR IMPORT MODAL
+  const [showImportModal, setShowImportModal] = useState(false);
 
   const isSidebarOpen = sidebarStage !== 'icon';
   const isSidebarCollapsed = sidebarStage === 'collapsed';
 
-  // Logic for the two-stage toggle with automatic second stage
+  // Logic for the two-stage toggle with automatic second stage (Unchanged)
   const toggleSidebar = () => {
     if (sidebarStage === 'full') {
       setSidebarStage('collapsed'); // Stage 1: Collapse height
@@ -112,15 +116,14 @@ export default function App() {
     }
   };
 
-  const maximizeSidebar = () => setSidebarStage('full'); // For the icon-only button
+  const maximizeSidebar = () => setSidebarStage('full');
 
   const addPhase = () => setPhases((p) => [...p, `Phase ${p.length + 1}`]);
 
-  // --- Framer Motion Stage Variants ---
-  // Define a smoother, consistent transition for all main variants
+  // --- Framer Motion Stage Variants (Unchanged from previous answer) ---
   const smoothTransition = {
     duration: 0.35,
-    ease: "easeInOut", // Changed to easeInOut for a smoother acceleration/deceleration
+    ease: "easeInOut",
   };
 
   const sidebarVariants = {
@@ -131,16 +134,16 @@ export default function App() {
       width: 250,
       height: 'calc(100vh - 30px)',
       borderRadius: '12px',
-      transition: smoothTransition, // Apply smooth transition
+      transition: smoothTransition,
     },
     collapsed: {
       opacity: 1,
       x: 15,
       scale: 1,
       width: 250,
-      height: 70, // Minimized height for top bar
+      height: 70,
       borderRadius: '12px',
-      transition: smoothTransition, // Apply smooth transition
+      transition: smoothTransition,
     },
     icon: {
       opacity: 0,
@@ -149,7 +152,6 @@ export default function App() {
       width: 50,
       height: 50,
       borderRadius: '12px',
-      // Keep a fast transition for the fade out to icon state
       transition: {
         duration: 0.25,
         opacity: { delay: 0.15, duration: 0.1 }
@@ -162,17 +164,18 @@ export default function App() {
       opacity: 1,
       height: 'auto',
       pointerEvents: 'auto',
-      transition: { duration: 0.3, ease: "easeOut" }, // Slightly faster content reveal
+      transition: { duration: 0.3, ease: "easeOut" },
     },
     collapsed: {
       opacity: 0,
       height: 0,
       pointerEvents: 'none',
-      transition: { duration: 0.3, ease: "easeOut" }, // Slightly faster content hide
+      transition: { duration: 0.3, ease: "easeOut" },
     }
   };
 
   const menuItems = [
+    // ... menuItems (Unchanged)
     {
       label: "Home",
       icon: Home,
@@ -196,8 +199,8 @@ export default function App() {
     },
   ];
 
-  // set help menu items to open the modal
   const helpMenuItems = [
+    // ... helpMenuItems (Unchanged)
     { label: "Staad Builder Docs", action: () => alert("Opening Docs...") },
     { label: "Tutorial", action: () => alert("Opening Tutorial...") },
     { type: "divider" },
@@ -207,6 +210,7 @@ export default function App() {
   ];
 
   useEffect(() => {
+    // ... close handlers (Unchanged)
     const close = (e) => {
       if (menuOpen && !e.target.closest(".main-dropdown-container")) {
         setMenuOpen(false);
@@ -221,6 +225,7 @@ export default function App() {
   }, [menuOpen, isHelpMenuOpen]);
 
   const openHelpMenu = () => {
+    // ... openHelpMenu (Unchanged)
     if (helpButtonRef.current) {
       const rect = helpButtonRef.current.getBoundingClientRect();
       const upwardShift = 20;
@@ -232,10 +237,18 @@ export default function App() {
   };
 
   function handleFormSubmit(type, payload) {
-    // Replace with your API call. For now we'll just console + alert.
+    // ... handleFormSubmit (Unchanged)
     console.log("Submitted", type, payload);
     alert(`${type} submitted — check console for payload.`);
   }
+
+  // NEW: Handler for file import
+  function handleFileImport(file) {
+    console.log("File Imported:", file.name, file);
+    alert(`File "${file.name}" imported successfully!`);
+    // Here you would add the actual file processing/upload logic
+  }
+
 
   return (
     <div className="min-h-screen w-screen flex overflow-hidden bg-white relative">
@@ -245,18 +258,15 @@ export default function App() {
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
-            // Adopted the new entry animation for the initial state transition to 'full'
             initial={sidebarStage === 'full' ? { opacity: 0, x: -40, scale: 0.9 } : "icon"}
             animate={sidebarStage}
             exit="icon"
             variants={sidebarVariants}
-            // Transition is now managed by the 'variants' object
-            // Removed: transition={{ duration: 0.35, ease: "easeOut" }} 
             style={{ originX: 0 }}
             className="absolute top-[15px] bg-[#2C2C2C] text-white flex flex-col justify-between overflow-hidden
               border-r border-gray-800 shadow-lg z-40"
           >
-            {/* TOP BAR - Always Visible */}
+            {/* TOP BAR (Unchanged) */}
             <div className={`relative flex items-center justify-between px-4 py-4 min-h-[70px]`}>
               <div className="flex items-center gap-2 relative">
                 <img src="/stdLogo.png" alt="Logo" className="w-5 h-5 object-contain" />
@@ -270,8 +280,7 @@ export default function App() {
                 </motion.button>
               </div>
 
-              {/* Sidebar Collapse/Maximize Button */}
-              {/* This button handles full -> collapsed (stage 1) */}
+              {/* Sidebar Collapse/Maximize Button (Unchanged) */}
               {sidebarStage !== 'icon' && (
                 <motion.button whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.8 }} onClick={toggleSidebar}>
                   <LuPanelLeft className={`w-5 h-5 text-white ${isSidebarCollapsed ? 'rotate-0' : 'rotate-180'}`} />
@@ -279,14 +288,14 @@ export default function App() {
               )}
             </div>
 
-            {/* COLLAPSIBLE CONTENT CONTAINER */}
+            {/* COLLAPSIBLE CONTENT CONTAINER (Unchanged) */}
             <motion.div
               initial="full"
               animate={isSidebarCollapsed ? 'collapsed' : 'full'}
               variants={contentVariants}
               className="flex-1 flex flex-col overflow-y-auto scrollbar-hide"
             >
-              {/* PROJECT TITLE */}
+              {/* PROJECT TITLE (Unchanged) */}
               <div className="px-4 pt-2 pb-3 border-b border-gray-700">
                 <div className="flex items-center justify-between">
                   <EditableTitle initialTitle="KTPL – Staad Model" isCollapsed={isSidebarCollapsed} />
@@ -294,7 +303,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* MAIN CONTENT */}
+              {/* MAIN CONTENT (Unchanged) */}
               <div className="flex-1 p-4 overflow-y-auto scrollbar-hide">
                 <div className="text-gray-300 text-xs mb-2 uppercase">Workspace</div>
 
@@ -303,7 +312,7 @@ export default function App() {
                   <Home size={15} />
                 </motion.button>
 
-                {/* PHASES */}
+                {/* PHASES (Unchanged) */}
                 <div className="flex justify-between items-center text-gray-300 text-xs uppercase mt-4 mb-2">
                   <span>Phases</span>
 
@@ -344,7 +353,10 @@ export default function App() {
 
               {/* FOOTER */}
               <div className="p-4 border-t border-gray-700 space-y-1">
-                <motion.button className="flex items-center gap-2 text-gray-300 hover:text-white transition text-sm w-full px-3 py-2 rounded-md hover:bg-gray-700">
+                {/* 3. UPDATED IMPORT BUTTON */}
+                <motion.button 
+                    onClick={() => setShowImportModal(true)}
+                    className="flex items-center gap-2 text-gray-300 hover:text-white transition text-sm w-full px-3 py-2 rounded-md hover:bg-gray-700">
                   <Download size={14} />
                   Import
                 </motion.button>
@@ -360,6 +372,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* MAIN DROPDOWN MENU (Unchanged) */}
+      {/* ... (Menu and Submenu Portals) */}
       {menuOpen &&
         ReactDOM.createPortal(
           <motion.div
@@ -409,6 +422,7 @@ export default function App() {
         )}
 
       {/* HELP MENU PORTAL (Unchanged) */}
+      {/* ... (Help Menu Portal) */}
       {isHelpMenuOpen &&
         ReactDOM.createPortal(
           <AnimatePresence>
@@ -442,6 +456,7 @@ export default function App() {
         )}
 
       {/* DELETE CONFIRMATION (Unchanged) */}
+      {/* ... (Delete Confirmation Modal) */}
       <AnimatePresence>
         {phaseToDelete !== null && (
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.85 }} transition={{ duration: 0.2 }} className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 backdrop-blur-sm">
@@ -457,10 +472,21 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Render the form modal when needed (Unchanged) */}
+      {/* Form Modal (Unchanged) */}
       <AnimatePresence>
         {formModal && <FormModal type={formModal} onClose={() => setFormModal(null)} onSubmit={handleFormSubmit} />}
       </AnimatePresence>
+      
+      {/* 4. RENDER THE IMPORT OVERLAY */}
+      <AnimatePresence>
+        {showImportModal && (
+          <ImportOverlay 
+            onClose={() => setShowImportModal(false)}
+            onFileSelected={handleFileImport}
+          />
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
