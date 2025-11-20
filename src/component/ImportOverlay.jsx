@@ -15,9 +15,9 @@ export default function ImportOverlay({ onClose, onFileSelected }) {
   const handleDrag = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-  }, []); // ✅ No dependencies
+  }, []);
 
-  // 🚀 FIX: Wrap startSimulatedUpload in useCallback
+  // Wrap startSimulatedUpload in useCallback
   const startSimulatedUpload = useCallback((file) => {
     setIsUploading(true);
     setUploadProgress(0);
@@ -33,13 +33,13 @@ export default function ImportOverlay({ onClose, onFileSelected }) {
         // Wait a little before closing to show 100%
         setTimeout(() => {
           setIsUploading(false);
-          // ⚠️ These functions must be in the dependency array of this useCallback
+          // These functions must be in the dependency array of this useCallback
           onFileSelected(file); 
           onClose();
         }, 300);
       }
     }, 150);
-  }, [onClose, onFileSelected]); // ✅ Dependencies for startSimulatedUpload
+  }, [onClose, onFileSelected]); // Dependencies for startSimulatedUpload
 
   const handleDragEnter = useCallback((e) => {
     e.preventDefault();
@@ -48,7 +48,7 @@ export default function ImportOverlay({ onClose, onFileSelected }) {
     if (dragCounter.current === 1) {
       setIsDragging(true);
     }
-  }, []); // ✅ No dependencies
+  }, []); // No dependencies
 
   const handleDragLeave = useCallback((e) => {
     e.preventDefault();
@@ -57,7 +57,7 @@ export default function ImportOverlay({ onClose, onFileSelected }) {
     if (dragCounter.current === 0) {
       setIsDragging(false);
     }
-  }, []); // ✅ No dependencies
+  }, []); // No dependencies
 
   // 🚀 FIX: Add startSimulatedUpload to the dependency array
   const handleDrop = useCallback((e) => {
@@ -68,12 +68,12 @@ export default function ImportOverlay({ onClose, onFileSelected }) {
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
-      startSimulatedUpload(file); // ⚠️ Now included as a dependency
+      startSimulatedUpload(file); // Now included as a dependency
     }
-  }, [startSimulatedUpload]); // ✅ Dependency added
+  }, [startSimulatedUpload]); // Dependency added
 
   
-  // Add/Remove listeners when the component mounts/unmounts (Dependencies updated)
+  // Add/Remove listeners when the component mounts/unmounts
   useEffect(() => {
     let div = dropAreaRef.current;
     if (div) {
@@ -106,7 +106,7 @@ export default function ImportOverlay({ onClose, onFileSelected }) {
     fileInputRef.current.click();
   };
   
-  // Define styles for aesthetic changes (Unchanged)
+  // Define styles for aesthetic changes 
   const dragAreaClasses = `
     flex flex-col items-center justify-center p-12 text-center 
     rounded-xl transition-all duration-300 ease-in-out
@@ -119,7 +119,6 @@ export default function ImportOverlay({ onClose, onFileSelected }) {
 
   return (
     <AnimatePresence>
-        {/* ... (JSX remains the same) ... */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -207,7 +206,7 @@ export default function ImportOverlay({ onClose, onFileSelected }) {
                   {isDragging ? "Drop your file to upload!" : "Drag & Drop your file here"}
                 </p>
                 <p className="text-sm text-gray-400 mt-1">
-                  (e.g., `.std`, `.dxf`, or custom project files)
+                  (e.g., `.std`, `.staad`)
                 </p>
                 <p className="mt-4 text-gray-500">- OR -</p>
 

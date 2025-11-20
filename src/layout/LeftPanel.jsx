@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
+import { useNavigate } from 'react-router-dom';
 import {
   Home,
   Plus,
@@ -18,8 +19,8 @@ import FormModal from "../component/FormModal";
 // 1. IMPORT THE NEW COMPONENT
 import ImportOverlay from "../component/ImportOverlay"; // Assuming ImportOverlay.jsx is in the same directory
 
-// --- START: Helper Components (Unchanged) ---
-// ... (EditableTitle and IconOnlySidebarButton remain unchanged)
+// --- START: Helper Components  ---
+// ... (EditableTitle and IconOnlySidebarButton)
 function EditableTitle({ initialTitle, isCollapsed }) {
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
@@ -100,7 +101,7 @@ export default function App() {
   const isSidebarOpen = sidebarStage !== 'icon';
   const isSidebarCollapsed = sidebarStage === 'collapsed';
 
-  // Logic for the two-stage toggle with automatic second stage (Unchanged)
+  // Logic for the two-stage toggle with automatic second stage
   const toggleSidebar = () => {
     if (sidebarStage === 'full') {
       setSidebarStage('collapsed'); // Stage 1: Collapse height
@@ -120,7 +121,7 @@ export default function App() {
 
   const addPhase = () => setPhases((p) => [...p, `Phase ${p.length + 1}`]);
 
-  // --- Framer Motion Stage Variants (Unchanged from previous answer) ---
+  // --- Framer Motion Stage Variants ---
   const smoothTransition = {
     duration: 0.35,
     ease: "easeInOut",
@@ -174,12 +175,14 @@ export default function App() {
     }
   };
 
+  const navigate = useNavigate();
+
   const menuItems = [
-    // ... menuItems (Unchanged)
+    // ... menuItems
     {
       label: "Home",
       icon: Home,
-      action: () => alert("Navigating to Home..."),
+      action: () => navigate("/"),
     },
     {
       label: "File",
@@ -200,7 +203,7 @@ export default function App() {
   ];
 
   const helpMenuItems = [
-    // ... helpMenuItems (Unchanged)
+    // ... helpMenuItems
     { label: "Staad Builder Docs", action: () => alert("Opening Docs...") },
     { label: "Tutorial", action: () => alert("Opening Tutorial...") },
     { type: "divider" },
@@ -210,7 +213,7 @@ export default function App() {
   ];
 
   useEffect(() => {
-    // ... close handlers (Unchanged)
+    // ... close handlers
     const close = (e) => {
       if (menuOpen && !e.target.closest(".main-dropdown-container")) {
         setMenuOpen(false);
@@ -225,7 +228,7 @@ export default function App() {
   }, [menuOpen, isHelpMenuOpen]);
 
   const openHelpMenu = () => {
-    // ... openHelpMenu (Unchanged)
+    // ... openHelpMenu
     if (helpButtonRef.current) {
       const rect = helpButtonRef.current.getBoundingClientRect();
       const upwardShift = 20;
@@ -237,7 +240,7 @@ export default function App() {
   };
 
   function handleFormSubmit(type, payload) {
-    // ... handleFormSubmit (Unchanged)
+    // ... handleFormSubmit
     console.log("Submitted", type, payload);
     alert(`${type} submitted — check console for payload.`);
   }
@@ -266,7 +269,7 @@ export default function App() {
             className="absolute top-[15px] bg-[#2C2C2C] text-white flex flex-col justify-between overflow-hidden
               border-r border-gray-800 shadow-lg z-40"
           >
-            {/* TOP BAR (Unchanged) */}
+            {/* TOP BAR */}
             <div className={`relative flex items-center justify-between px-4 py-4 min-h-[70px]`}>
               <div className="flex items-center gap-2 relative">
                 <img src="/stdLogo.png" alt="Logo" className="w-5 h-5 object-contain" />
@@ -280,7 +283,7 @@ export default function App() {
                 </motion.button>
               </div>
 
-              {/* Sidebar Collapse/Maximize Button (Unchanged) */}
+              {/* Sidebar Collapse/Maximize Button */}
               {sidebarStage !== 'icon' && (
                 <motion.button whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.8 }} onClick={toggleSidebar}>
                   <LuPanelLeft className={`w-5 h-5 text-white ${isSidebarCollapsed ? 'rotate-0' : 'rotate-180'}`} />
@@ -288,14 +291,14 @@ export default function App() {
               )}
             </div>
 
-            {/* COLLAPSIBLE CONTENT CONTAINER (Unchanged) */}
+            {/* COLLAPSIBLE CONTENT CONTAINER */}
             <motion.div
               initial="full"
               animate={isSidebarCollapsed ? 'collapsed' : 'full'}
               variants={contentVariants}
               className="flex-1 flex flex-col overflow-y-auto scrollbar-hide"
             >
-              {/* PROJECT TITLE (Unchanged) */}
+              {/* PROJECT TITLE */}
               <div className="px-4 pt-2 pb-3 border-b border-gray-700">
                 <div className="flex items-center justify-between">
                   <EditableTitle initialTitle="KTPL – Staad Model" isCollapsed={isSidebarCollapsed} />
@@ -303,7 +306,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* MAIN CONTENT (Unchanged) */}
+              {/* MAIN CONTENT */}
               <div className="flex-1 p-4 overflow-y-auto scrollbar-hide">
                 <div className="text-gray-300 text-xs mb-2 uppercase">Workspace</div>
 
@@ -312,7 +315,7 @@ export default function App() {
                   <Home size={15} />
                 </motion.button>
 
-                {/* PHASES (Unchanged) */}
+                {/* PHASES */}
                 <div className="flex justify-between items-center text-gray-300 text-xs uppercase mt-4 mb-2">
                   <span>Phases</span>
 
@@ -353,7 +356,7 @@ export default function App() {
 
               {/* FOOTER */}
               <div className="p-4 border-t border-gray-700 space-y-1">
-                {/* 3. UPDATED IMPORT BUTTON */}
+                {/* 3. IMPORT BUTTON */}
                 <motion.button 
                     onClick={() => setShowImportModal(true)}
                     className="flex items-center gap-2 text-gray-300 hover:text-white transition text-sm w-full px-3 py-2 rounded-md hover:bg-gray-700">
@@ -371,7 +374,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* MAIN DROPDOWN MENU (Unchanged) */}
+      {/* MAIN DROPDOWN MENU */}
       {/* ... (Menu and Submenu Portals) */}
       {menuOpen &&
         ReactDOM.createPortal(
@@ -421,7 +424,7 @@ export default function App() {
           document.body
         )}
 
-      {/* HELP MENU PORTAL (Unchanged) */}
+      {/* HELP MENU PORTAL */}
       {/* ... (Help Menu Portal) */}
       {isHelpMenuOpen &&
         ReactDOM.createPortal(
@@ -455,7 +458,7 @@ export default function App() {
           document.body
         )}
 
-      {/* DELETE CONFIRMATION (Unchanged) */}
+      {/* DELETE CONFIRMATION */}
       {/* ... (Delete Confirmation Modal) */}
       <AnimatePresence>
         {phaseToDelete !== null && (
@@ -472,7 +475,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Form Modal (Unchanged) */}
+      {/* Form Modal */}
       <AnimatePresence>
         {formModal && <FormModal type={formModal} onClose={() => setFormModal(null)} onSubmit={handleFormSubmit} />}
       </AnimatePresence>
